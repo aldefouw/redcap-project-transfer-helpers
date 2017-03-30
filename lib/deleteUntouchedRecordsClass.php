@@ -43,7 +43,7 @@ class deleteUntouchedRecordsClass {
 
             $first_column = true;
 
-            foreach($tr->getElementsByTa8gName('td') as $tdk => $td){
+            foreach($tr->getElementsByTagName('td') as $tdk => $td){
                 if($first_column) {
                     $first_column = false; #Skip the first column
                 } else {
