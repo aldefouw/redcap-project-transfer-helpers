@@ -14,7 +14,7 @@ class importSurveyTimestampsClass {
     function __construct($imports) {
         $this->setDebugMode($imports['debug_mode']);
 
-        $required_keys = ['connection', 'event_id', 'project_id', 'csv_path'];
+        $required_keys = array('connection', 'event_id', 'project_id', 'csv_path');
         $this->setVars($required_keys, $imports);
 
         $this->setCSVArray();

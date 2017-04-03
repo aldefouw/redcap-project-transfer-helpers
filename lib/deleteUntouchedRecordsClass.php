@@ -12,7 +12,7 @@ class deleteUntouchedRecordsClass {
 
     function __construct($object) {
         $this->setDebugMode($object['debug_mode']);
-        $required_keys = ['connection', 'event_id', 'project_id', 'table_path'];
+        $required_keys = array('connection', 'event_id', 'project_id', 'table_path');
         $this->setVars($required_keys, $object);
 
         $this->setHTML($object['table_path']);

@@ -10,11 +10,11 @@ if (SUPER_USER){
 
 require_once '../../lib/deleteUntouchedRecordsClass.php';
 
-$delete_object = ['connection' => $conn,
+$delete_object = array('connection' => $conn,
                   'event_id' => 1,
                   'project_id' => 1,
                   'debug_mode' => true,
-                  'table_path' => "imports/table.html"];
+                  'table_path' => "imports/table.html");
 
 $delete = new deleteUntouchedRecordsClass($delete_object);
 

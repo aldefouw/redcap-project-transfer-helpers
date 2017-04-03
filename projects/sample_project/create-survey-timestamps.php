@@ -10,11 +10,11 @@ if (SUPER_USER){
 
 require_once '../../lib/importSurveyTimestampsClass.php';
 
-$import_object = ['connection' => $conn,
+$import_object = array('connection' => $conn,
                   'event_id' => 1,
                   'project_id' => 1,
                   'debug_mode' => true,
-                  'csv_path' => "imports/requests.csv"];
+                  'csv_path' => "imports/requests.csv");
 
 $import = new importSurveyTimestampsClass($import_object);
 
