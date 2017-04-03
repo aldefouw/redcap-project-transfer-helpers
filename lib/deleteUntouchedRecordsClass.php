@@ -8,6 +8,7 @@ class deleteUntouchedRecordsClass {
 
     private $doc;
     private $result_array;
+    private $event_array;
 
 
     function __construct($object) {
@@ -35,15 +36,36 @@ class deleteUntouchedRecordsClass {
     }
 
     function setResultArray(){
-        $trs = $this->doc->getElementsByTagName('tr');
 
+        if( is_array($this->event_id) ) {
+            $thead = $this->doc->getElementsByTagName('thead');
+            $this->event_array = array();
+
+            foreach ($thead as $k => $thead) {
+                foreach ($thead->getElementsByTagName('tr') as $key => $tr) {
+                    $first_column = true;
+                    foreach ($thead->getElementsByTagName('th') as $thk => $th) {
+                        if ($first_column) {
+                            $first_column = false; #Skip the first column
+                        } else {
+                            foreach ($th->getElementsByTagName('div') as $k => $div) {
+                                $event_name = $div->nodeValue;
+                                $this->event_array[$key][$thk]['event_name'] = $event_name;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $trs = $this->doc->getElementsByTagName('tr');
         $this->result_array = array();
 
         foreach ($trs as $key => $tr){
 
             $first_column = true;
 
-            foreach($tr->getElementsByTa8gName('td') as $tdk => $td){
+            foreach($tr->getElementsByTagName('td') as $tdk => $td){
                 if($first_column) {
                     $first_column = false; #Skip the first column
                 } else {
@@ -79,8 +101,8 @@ class deleteUntouchedRecordsClass {
             $this->result_array[$key][$tdk]['delete'] = false;
         }
     }
-
-    function getDeleteFields($e){
+    
+    function getDeleteFields($e, $k){
         // Get list of all fields with data for this record on this form
         $sql = "SELECT DISTINCT redcap_data.field_name
                 FROM redcap_data 
@@ -92,7 +114,7 @@ class deleteUntouchedRecordsClass {
                   event_id = %d AND 
                   record = '%s'";
 
-        $query = sprintf($sql, prep($e['page']), $this->getProjectID(), $this->getEventID(), prep($e['id']));
+        $query = sprintf($sql, prep($e['page']), $this->getProjectID(), $this->getEventID($k), prep($e['id']));
         $q = db_query($query);
 
         $eraseFields = array();
@@ -110,22 +132,22 @@ class deleteUntouchedRecordsClass {
         db_query("BEGIN");
 
         foreach($this->result_array as $entry){
-           foreach($entry as $e){
+            foreach($entry as $k => $e){
 
-               if($e['delete']) {
-                   $eraseFields = $this->getDeleteFields($e);
+                if($e['delete']) {
+                    $eraseFields = $this->getDeleteFields($e, $k);
 
-                   if($eraseFields){
-                       $sql = "DELETE FROM redcap_data WHERE project_id = %d AND event_id = %d AND record = '%s' AND field_name IN (%s)";
-                       $query = sprintf($sql, $this->getProjectID(), $this->getEventID(), $e['id'], prep_implode($eraseFields));
-                       $response = db_query($query);
+                    if($eraseFields){
+                        $sql = "DELETE FROM redcap_data WHERE project_id = %d AND event_id = %d AND record = '%s' AND field_name IN (%s)";
+                        $query = sprintf($sql, $this->getProjectID(), $this->getEventID($k), $e['id'], prep_implode($eraseFields));
+                        $response = db_query($query);
 
                         if (!$response) $errors++;
-                       $this->debugOutput($query, $response, 'DELETED '.prep_implode($eraseFields).' FROM record '.$e['id'].'. <br /> ================================');
-                   }
-               }
-           }
-       }
+                        $this->debugOutput($query, $response, 'DELETED '.prep_implode($eraseFields).' FROM record '.$e['id'].'. <br /> ================================');
+                    }
+                }
+            }
+        }
 
         if ($errors > 0) {
             db_query("ROLLBACK"); // Errors occurred, so undo any changes made
@@ -150,8 +172,15 @@ class deleteUntouchedRecordsClass {
         return $this->project_id;
     }
 
-    function getEventID(){
-        return $this->event_id;
+    function getEventID($k){
+        if( is_array($this->event_id) ) {
+            $event_name = $this->event_array[0][$k]['event_name'];
+            $event_id = $this->event_id[$event_name];
+        } else {
+            $event_id = $this->event_id;
+        }
+
+        return $event_id;
     }
 
     function setDebugMode($debug_mode){
