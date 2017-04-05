@@ -163,8 +163,8 @@ class importSurveyTimestampsClass {
         db_query("SET AUTOCOMMIT=0");
         db_query("BEGIN");
 
-        $sql = "INSERT INTO redcap_surveys_participants (survey_id, event_id) VALUES (%d, %d)";
-        $query = sprintf($sql, $survey_id, $this->getEventID());
+        $sql = "INSERT INTO redcap_surveys_participants (survey_id, event_id, participant_email) VALUES (%d, %d, %s)";
+        $query = sprintf($sql, $survey_id, $this->getEventID(), '');
         $participants_inserted = db_query($query);
 
         if (!$participants_inserted) $errors++;
