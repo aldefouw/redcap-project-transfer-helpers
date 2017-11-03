@@ -14,6 +14,9 @@ This project contains PHP libraries that will aid in the transfer of a REDCap pr
 
 2) **Records that have never been touched are set to "inactive" rather than "null" completion status**
 
+    **UPDATE:** You are probably better off using my [REDCap API Transfer](https://github.com/aldefouw/redcap-api-transfer) script instead of trying to remove these bubbles with this script.  The REDCap API Transfer script uses EAV to transfer the records, which means the bubbles transfer over exactly as they appear on the other site.  This negates the need to delete the bubble records. 
+
+
       All records receive a red (inactive) bubble - but not all bubbles should. 
       
       The **deleteUntouchedRecordsClass** aims to correct this.
