@@ -1,3 +1,7 @@
+#### NO LONGER MAINTAINED ####
+
+Please see https://github.com/aldefouw/redcap-api-transfer for a better solution to transfering a project.
+
 # redcap-project-transfer-helpers
 
 This project contains PHP libraries that will aid in the transfer of a REDCap project from one server to another.
